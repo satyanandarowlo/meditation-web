@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import * as serviceWorker from "./service-worker"; // Import the service worker
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration"; // Updated
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -17,5 +17,5 @@ root.render(
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
 
-// Register the service worker to enable offline functionality
-serviceWorker.register();
+// This will register the service worker in production mode
+serviceWorkerRegistration.register();

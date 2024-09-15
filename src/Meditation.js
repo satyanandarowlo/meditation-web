@@ -40,7 +40,7 @@ const Meditation = ({ user }) => {
     audio.play(); // Play bell sound
 
     // Increment the delay by 5%
-    delay = delay * 1.05;
+    delay = delay * 1.01;
     setDelay(delay); // Update state with the new delay
     setCurrentDelay(delay / 1000); // Show updated delay in seconds
 
