@@ -1,55 +1,69 @@
-/* Background color for the entire app */
+/* App.css */
 .app-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  height: 100vh;
+  justify-content: flex-start;
+  min-height: 100vh;
   background: linear-gradient(135deg, #6e8efb, #a777e3);
-  font-family: 'Roboto', sans-serif; /* Use Google Fonts for clean typography */
+  padding: 20px;
 }
 
-/* Styling for the countdown text */
-.countdown h1 {
-  font-size: 3rem;
-  color: #fff;
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+/* Menu Styles */
+.menu-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
 }
 
-/* Styling for meditation information display */
-.meditation-info h1, .meditation-info h2 {
-  color: #fff;
-  text-align: center;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.meditation-info h1 {
-  font-size: 2.5rem;
-}
-
-.meditation-info h2 {
-  font-size: 2rem;
-  margin-top: 20px;
-}
-
-/* Button styling */
-.button-container {
-  text-align: center;
-}
-
-.start-button {
+.menu-button {
   background-color: #fff;
   border: none;
-  padding: 20px 40px;
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #6e8efb;
-  border-radius: 30px;
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+  font-size: 24px;
+  padding: 10px;
   cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 50%;
 }
 
-.start-button:hover {
-  background-color: #f0f0f0;
-  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.3);
+.menu-dropdown {
+  position: absolute;
+  top: 50px;
+  right: 20px;
+  background-color: white;
+  padding: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.menu-dropdown a {
+  display: block;
+  margin-bottom: 10px;
+  color: #333;
+  text-decoration: none;
+}
+
+/* Meditation.css */
+.meditation-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.meditation-logo {
+  width: 150px;
+  margin-bottom: 20px;
+}
+
+.start-button, .stop-button {
+  background-color: #fff;
+  border: none;
+  padding: 15px 30px;
+  font-size: 16px;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+.countdown p, .meditation-info p {
+  font-size: 1.5rem;
+  color: #fff;
+  margin: 10px 0;
 }

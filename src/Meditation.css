@@ -1,0 +1,39 @@
+/* Meditation.css */
+.meditation-container {
+    text-align: center;
+  }
+  
+  .meditation-logo {
+    width: 200px;
+    height: 200px;
+    border-radius: 100px;
+    margin-bottom: 30px;
+  }
+  
+  .countdown {
+    font-size: 24px;
+    color: #fff;
+  }
+  
+  .meditation-info {
+    font-size: 24px;
+    color: #fff;
+    margin-top: 20px;
+  }
+  
+  .start-button, .stop-button {
+    margin-top: 30px;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 30px;
+    background-color: white;
+    color: #6e8efb;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .stop-button {
+    background-color: #ff5252;
+    margin-left: 20px;
+  }
+  
