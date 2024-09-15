@@ -40,15 +40,15 @@ const Meditation = ({ user }) => {
     audio.play(); // Play bell sound
 
     // Increment the delay by 5%
-    const newDelay = delay * 1.05;
-    setDelay(newDelay); // Update state with the new delay
-    setCurrentDelay(newDelay / 1000); // Show updated delay in seconds
+    delay = delay * 1.05;
+    setDelay(delay); // Update state with the new delay
+    setCurrentDelay(delay / 1000); // Show updated delay in seconds
 
     const now = Date.now();
     setTotalDuration(now - startTimeRef.current); // Update meditation duration
 
     // Schedule the next bell with the updated delay
-    timeoutRef.current = setTimeout(playSoundAndIncreaseDelay, newDelay);
+    timeoutRef.current = setTimeout(playSoundAndIncreaseDelay, delay);
   };
 
   // Stop meditation
