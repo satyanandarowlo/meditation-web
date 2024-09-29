@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Meditation from "./meditation/Meditation";
 import Menu from "./Menu";
 import "./App.css";
-import "./devtools/devtools";
+import "./protection/protect";
 
 const App = () => {
   const [user, setUser] = useState(null);

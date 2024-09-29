@@ -1,4 +1,14 @@
 (function () {
+  console.log = function () {
+    return false;
+  };
+  console.warn = function () {
+    return false;
+  };
+  console.error = function () {
+    return false;
+  };
+
   // Prevent right-click (context menu)
   window.addEventListener("contextmenu", function (e) {
     e.preventDefault();
