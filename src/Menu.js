@@ -1,6 +1,6 @@
 // Menu.js
 import React, { useState } from "react";
-import Auth from "./Auth";
+import Auth from "./login/Auth";
 
 const Menu = ({ user, setUser }) => {
   const [isMenuOpen, setMenuOpen] = useState(false);

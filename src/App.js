@@ -1,8 +1,9 @@
 // App.js
 import React, { useState } from "react";
-import Meditation from "./Meditation";
+import Meditation from "./meditation/Meditation";
 import Menu from "./Menu";
 import "./App.css";
+import "./devtools/devtools";
 
 const App = () => {
   const [user, setUser] = useState(null);

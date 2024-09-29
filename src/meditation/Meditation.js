@@ -5,14 +5,20 @@ const Meditation = ({ user }) => {
   let [delay, setDelay] = useState(1000); // Initial delay of 1 second
   const [started, setStarted] = useState(false);
   const [isCountingDown, setIsCountingDown] = useState(false);
-  const [countdown, setCountdown] = useState(10); // Countdown timer
+  const [countdown, setCountdown] = useState(10);
   const [totalDuration, setTotalDuration] = useState(0); // Track meditation duration
   const [currentDelay, setCurrentDelay] = useState(0); // Current trance gap for display
   const startTimeRef = useRef(0);
   const timeoutRef = useRef(null);
 
-  // Load the audio file using native HTML5 Audio API
-  const audio = useRef(new Audio("/bell-a-99888.mp3")).current;
+  // Load the bell sound and river flow sound using native HTML5 Audio API
+  const bellAudio = useRef(new Audio("/bell-a-99888.mp3")).current;
+  const riverAudio = useRef(new Audio("/river-flow-68361.mp3")).current;
+
+  useEffect(() => {
+    // Set river flow audio to loop continuously
+    riverAudio.loop = true;
+  }, [riverAudio]);
 
   // Countdown before starting the meditation
   useEffect(() => {
@@ -31,13 +37,16 @@ const Meditation = ({ user }) => {
     setStarted(true);
     setCurrentDelay(delay / 1000); // Initial gap in seconds
     startTimeRef.current = Date.now();
-    timeoutRef.current = setTimeout(playSoundAndIncreaseDelay, delay); // Start the sound and delay cycle
+
+    // Start playing river flow sound in the background
+    riverAudio.play();
+
+    timeoutRef.current = setTimeout(playSoundAndIncreaseDelay, delay); // Start the bell sound cycle
   };
 
-  // Play sound and gradually increase the gap
   const playSoundAndIncreaseDelay = () => {
-    audio.currentTime = 0; // Reset audio time to the start
-    audio.play(); // Play bell sound
+    bellAudio.currentTime = 0; // Reset bell sound to the start
+    bellAudio.play(); // Play the bell sound
 
     // Increment the delay by 5%
     delay = delay * 1.01;
@@ -51,10 +60,10 @@ const Meditation = ({ user }) => {
     timeoutRef.current = setTimeout(playSoundAndIncreaseDelay, delay);
   };
 
-  // Stop meditation
   const handleStop = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current); // Clear any ongoing timeouts
-    audio.pause(); // Stop any ongoing sound
+    bellAudio.pause(); // Stop bell sound
+    riverAudio.pause(); // Stop river flow sound
     setStarted(false);
     setIsCountingDown(false);
     setCountdown(10); // Reset countdown to 10 seconds
