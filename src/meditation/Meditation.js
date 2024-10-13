@@ -7,15 +7,17 @@ const Meditation = ({ user }) => {
     const storedDelay = localStorage.getItem("delay");
     return storedDelay ? parseInt(storedDelay, 10) : 1000;
   });
+  const [runningDelay, setRunningDelay] = useState(0);
   const [maxDelay, setMaxDelay] = useState(() => {
+    // Retrieve the stored max delay from localStorage or use the default value
     const storedMaxDelay = localStorage.getItem("maxDelay");
-    return storedMaxDelay ? parseInt(storedMaxDelay, 10) : 60000; // Default to 60 seconds
+    return storedMaxDelay ? parseInt(storedMaxDelay, 10) : 70000; // Default to "Suggestive - Delta"
   });
   const [started, setStarted] = useState(false);
   const [isCountingDown, setIsCountingDown] = useState(false);
-  const [countdown, setCountdown] = useState(10);
+  const [countdown, setCountdown] = useState(3);
   const [totalDuration, setTotalDuration] = useState(0); // Track meditation duration
-  const [currentDelay, setCurrentDelay] = useState(0); // Current trance gap for display
+  let [currentDelay, setCurrentDelay] = useState(0); // Current trance gap for display
   const [percentage, setPercentage] = useState(() => {
     // Retrieve the stored percentage from localStorage or use the default value
     const storedPercentage = localStorage.getItem("percentage");
@@ -61,20 +63,27 @@ const Meditation = ({ user }) => {
     bellAudio.currentTime = 0; // Reset bell sound to the start
     bellAudio.play(); // Play the bell sound
 
-    // Increment the delay by the user-selected percentage
-    let newDelay = delay * percentage;
-    if (newDelay > maxDelay) {
-      newDelay = maxDelay;
+    if (currentDelay == 0) {
+      console.log("currentDelay is 0");
+      currentDelay = delay;
+      setCurrentDelay(currentDelay / 1000); // Initial gap in seconds
     }
 
-    setDelay(newDelay); // Update state with the new delay
-    setCurrentDelay(newDelay / 1000); // Show updated delay in seconds
+    // Increment the delay by the user-selected percentage
+    currentDelay = currentDelay * percentage;
+    console.log("currentDelay: " + currentDelay);
+    if (currentDelay > maxDelay) {
+      currentDelay = maxDelay;
+    }
+
+    // setDelay(newDelay); // Update state with the new delay
+    setCurrentDelay(currentDelay / 1000); // Show updated delay in seconds
 
     const now = Date.now();
     setTotalDuration(now - startTimeRef.current); // Update meditation duration
 
     // Schedule the next bell with the updated delay
-    timeoutRef.current = setTimeout(playSoundAndIncreaseDelay, newDelay);
+    timeoutRef.current = setTimeout(playSoundAndIncreaseDelay, currentDelay);
   };
 
   const handleStop = () => {
@@ -83,7 +92,7 @@ const Meditation = ({ user }) => {
     riverAudio.pause(); // Stop river flow sound
     setStarted(false);
     setIsCountingDown(false);
-    setCountdown(10); // Reset countdown to 10 seconds
+    setCountdown(3); // Reset countdown to 10 seconds
     setTotalDuration(0); // Reset meditation duration
     setCurrentDelay(0); // Reset trance gap
     setDelay(1000); // Reset delay to initial 1 second
@@ -148,7 +157,7 @@ const Meditation = ({ user }) => {
       >
         {[...Array(10).keys()].map((i) => (
           <option key={i + 1} value={(i + 1) * 10000}>
-            {(i + 1) * 10}{" "}
+            {(i + 1) * 10000}{" "}
             {i + 1 === 1
               ? "(Fully Alert - Gamma)"
               : i + 1 === 2
