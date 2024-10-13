@@ -59,6 +59,7 @@ const Meditation = ({ user }) => {
 
     // Increment the delay by the user-selected percentage
     const newDelay = delay * percentage;
+
     setDelay(newDelay); // Update state with the new delay
     setCurrentDelay(newDelay / 1000); // Show updated delay in seconds
 
@@ -103,7 +104,7 @@ const Meditation = ({ user }) => {
     <div className="meditation-container">
       <img src="/logo.png" className="meditation-logo" alt="Logo" />
       <label htmlFor="initial-delay-select">
-        Select Initial Delay (seconds):
+        What is Your Current Mood? (1: Hyper Active, 10: Very Relaxed):
       </label>
       <select
         id="initial-delay-select"
@@ -112,12 +113,19 @@ const Meditation = ({ user }) => {
       >
         {[...Array(10).keys()].map((i) => (
           <option key={i + 1} value={(i + 1) * 1000}>
-            {i + 1}
+            {i + 1}{" "}
+            {i + 1 === 1
+              ? "(Hyper Active)"
+              : i + 1 === 10
+              ? "(Very Relaxed)"
+              : i + 1 <= 5
+              ? "(Active)"
+              : "(Relaxed)"}
           </option>
         ))}
       </select>
       <label htmlFor="percentage-select">
-        Select Delay Increase Percentage:
+        How Quickly You Want to enter the Meditative State? (1: Slow, 10: Fast):
       </label>
       <select
         id="percentage-select"
@@ -126,14 +134,18 @@ const Meditation = ({ user }) => {
       >
         {[...Array(10).keys()].map((i) => (
           <option key={i + 1} value={1.01 + i * 0.01}>
-            {(1.01 + i * 0.01).toFixed(2)}
+            {i + 1}{" "}
+            {i + 1 === 1
+              ? "(Slow)"
+              : i + 1 === 10
+              ? "(Fast)"
+              : i + 1 <= 5
+              ? "(Moderate)"
+              : "(Quick)"}
           </option>
         ))}
       </select>
-      <p>
-        Current Delay Increase Percentage: {(percentage * 100 - 100).toFixed(2)}
-        %
-      </p>
+      <p>Current Speed: {((percentage - 1) * 100).toFixed(2)}%</p>
       {user ? (
         isCountingDown && countdown > 0 ? (
           <div className="countdown">
