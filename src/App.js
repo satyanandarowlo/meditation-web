@@ -4,7 +4,7 @@ import Meditation from "./meditation/Meditation";
 import Menu from "./Menu";
 import "./App.css";
 import Auth from "./login/Auth";
-// import "./protection/protect";
+import "./protection/protect";
 
 const App = () => {
   const [user, setUser] = useState(null);
