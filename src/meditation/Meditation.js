@@ -2,18 +2,21 @@ import React, { useState, useEffect, useRef } from "react";
 import "./Meditation.css";
 
 const Meditation = ({ user }) => {
-  let [delay, setDelay] = useState(1000); // Initial delay of 1 second
-
-  // Function to handle initial delay change
-  const handleDelayChange = (event) => {
-    setDelay(parseInt(event.target.value));
-  };
+  const [delay, setDelay] = useState(() => {
+    // Retrieve the stored delay from localStorage or use the default value
+    const storedDelay = localStorage.getItem("delay");
+    return storedDelay ? parseInt(storedDelay, 10) : 1000;
+  });
   const [started, setStarted] = useState(false);
   const [isCountingDown, setIsCountingDown] = useState(false);
   const [countdown, setCountdown] = useState(10);
   const [totalDuration, setTotalDuration] = useState(0); // Track meditation duration
   const [currentDelay, setCurrentDelay] = useState(0); // Current trance gap for display
-  const [percentage, setPercentage] = useState(1.01); // Default percentage increase
+  const [percentage, setPercentage] = useState(() => {
+    // Retrieve the stored percentage from localStorage or use the default value
+    const storedPercentage = localStorage.getItem("percentage");
+    return storedPercentage ? parseFloat(storedPercentage) : 1.01;
+  });
   const startTimeRef = useRef(0);
   const timeoutRef = useRef(null);
 
@@ -55,15 +58,15 @@ const Meditation = ({ user }) => {
     bellAudio.play(); // Play the bell sound
 
     // Increment the delay by the user-selected percentage
-    delay = delay * percentage;
-    setDelay(delay); // Update state with the new delay
-    setCurrentDelay(delay / 1000); // Show updated delay in seconds
+    const newDelay = delay * percentage;
+    setDelay(newDelay); // Update state with the new delay
+    setCurrentDelay(newDelay / 1000); // Show updated delay in seconds
 
     const now = Date.now();
     setTotalDuration(now - startTimeRef.current); // Update meditation duration
 
     // Schedule the next bell with the updated delay
-    timeoutRef.current = setTimeout(playSoundAndIncreaseDelay, delay);
+    timeoutRef.current = setTimeout(playSoundAndIncreaseDelay, newDelay);
   };
 
   const handleStop = () => {
@@ -84,7 +87,16 @@ const Meditation = ({ user }) => {
 
   // Function to handle percentage change
   const handlePercentageChange = (event) => {
-    setPercentage(parseFloat(event.target.value));
+    const newPercentage = parseFloat(event.target.value);
+    setPercentage(newPercentage);
+    localStorage.setItem("percentage", newPercentage); // Store the new percentage in localStorage
+  };
+
+  // Function to handle delay change
+  const handleDelayChange = (event) => {
+    const newDelay = parseInt(event.target.value, 10);
+    setDelay(newDelay);
+    localStorage.setItem("delay", newDelay); // Store the new delay in localStorage
   };
 
   return (
@@ -112,19 +124,16 @@ const Meditation = ({ user }) => {
         value={percentage}
         onChange={handlePercentageChange}
       >
-        <option value="1.01">1%</option>
-        <option value="1.02">2%</option>
-        <option value="1.03">3%</option>
-        <option value="1.04">4%</option>
-        <option value="1.05">5%</option>
-        <option value="1.10">10%</option>
-        <option value="1.20">20%</option>
-        <option value="1.50">50%</option>
-        <option value="2.00">100%</option>
+        {[...Array(10).keys()].map((i) => (
+          <option key={i + 1} value={1.01 + i * 0.01}>
+            {(1.01 + i * 0.01).toFixed(2)}
+          </option>
+        ))}
       </select>
-      <div className="delay-info">
-        <p>Current delay: {currentDelay.toFixed(2)} seconds</p>
-      </div>
+      <p>
+        Current Delay Increase Percentage: {(percentage * 100 - 100).toFixed(2)}
+        %
+      </p>
       {user ? (
         isCountingDown && countdown > 0 ? (
           <div className="countdown">
