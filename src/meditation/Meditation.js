@@ -7,6 +7,10 @@ const Meditation = ({ user }) => {
     const storedDelay = localStorage.getItem("delay");
     return storedDelay ? parseInt(storedDelay, 10) : 1000;
   });
+  const [maxDelay, setMaxDelay] = useState(() => {
+    const storedMaxDelay = localStorage.getItem("maxDelay");
+    return storedMaxDelay ? parseInt(storedMaxDelay, 10) : 60000; // Default to 60 seconds
+  });
   const [started, setStarted] = useState(false);
   const [isCountingDown, setIsCountingDown] = useState(false);
   const [countdown, setCountdown] = useState(10);
@@ -58,7 +62,10 @@ const Meditation = ({ user }) => {
     bellAudio.play(); // Play the bell sound
 
     // Increment the delay by the user-selected percentage
-    const newDelay = delay * percentage;
+    let newDelay = delay * percentage;
+    if (newDelay > maxDelay) {
+      newDelay = maxDelay;
+    }
 
     setDelay(newDelay); // Update state with the new delay
     setCurrentDelay(newDelay / 1000); // Show updated delay in seconds
@@ -100,6 +107,13 @@ const Meditation = ({ user }) => {
     localStorage.setItem("delay", newDelay); // Store the new delay in localStorage
   };
 
+  // Function to handle max delay change
+  const handleMaxDelayChange = (event) => {
+    const newMaxDelay = parseInt(event.target.value, 10);
+    setMaxDelay(newMaxDelay);
+    localStorage.setItem("maxDelay", newMaxDelay); // Store the new max delay in localStorage
+  };
+
   return (
     <div className="meditation-container">
       <img src="/logo.png" className="meditation-logo" alt="Logo" />
@@ -121,6 +135,39 @@ const Meditation = ({ user }) => {
               : i + 1 <= 5
               ? "(Active)"
               : "(Relaxed)"}
+          </option>
+        ))}
+      </select>
+      <label htmlFor="max-delay-select">
+        Select Maximum Deep State (seconds):
+      </label>
+      <select
+        id="max-delay-select"
+        value={maxDelay}
+        onChange={handleMaxDelayChange}
+      >
+        {[...Array(10).keys()].map((i) => (
+          <option key={i + 1} value={(i + 1) * 10000}>
+            {(i + 1) * 10}{" "}
+            {i + 1 === 1
+              ? "(Fully Alert - Gamma)"
+              : i + 1 === 2
+              ? "(Alert - Beta)"
+              : i + 1 === 3
+              ? "(Half Alert - Beta)"
+              : i + 1 === 4
+              ? "(Half Drift - Alpha)"
+              : i + 1 === 5
+              ? "(Drift - Theta)"
+              : i + 1 === 6
+              ? "(Half Suggestive - Theta)"
+              : i + 1 === 7
+              ? "(Suggestive - Delta)"
+              : i + 1 === 8
+              ? "(Super Conscious State - Level 1)"
+              : i + 1 === 9
+              ? "(Super Conscious State - Level 2)"
+              : "(Super Conscious State - Level 3)"}
           </option>
         ))}
       </select>
