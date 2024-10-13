@@ -3,11 +3,17 @@ import "./Meditation.css";
 
 const Meditation = ({ user }) => {
   let [delay, setDelay] = useState(1000); // Initial delay of 1 second
+
+  // Function to handle initial delay change
+  const handleDelayChange = (event) => {
+    setDelay(parseInt(event.target.value));
+  };
   const [started, setStarted] = useState(false);
   const [isCountingDown, setIsCountingDown] = useState(false);
   const [countdown, setCountdown] = useState(10);
   const [totalDuration, setTotalDuration] = useState(0); // Track meditation duration
   const [currentDelay, setCurrentDelay] = useState(0); // Current trance gap for display
+  const [percentage, setPercentage] = useState(1.01); // Default percentage increase
   const startTimeRef = useRef(0);
   const timeoutRef = useRef(null);
 
@@ -48,8 +54,8 @@ const Meditation = ({ user }) => {
     bellAudio.currentTime = 0; // Reset bell sound to the start
     bellAudio.play(); // Play the bell sound
 
-    // Increment the delay by 5%
-    delay = delay * 1.01;
+    // Increment the delay by the user-selected percentage
+    delay = delay * percentage;
     setDelay(delay); // Update state with the new delay
     setCurrentDelay(delay / 1000); // Show updated delay in seconds
 
@@ -76,9 +82,49 @@ const Meditation = ({ user }) => {
     setIsCountingDown(true);
   };
 
+  // Function to handle percentage change
+  const handlePercentageChange = (event) => {
+    setPercentage(parseFloat(event.target.value));
+  };
+
   return (
     <div className="meditation-container">
       <img src="/logo.png" className="meditation-logo" alt="Logo" />
+      <label htmlFor="initial-delay-select">
+        Select Initial Delay (seconds):
+      </label>
+      <select
+        id="initial-delay-select"
+        value={delay}
+        onChange={handleDelayChange}
+      >
+        {[...Array(10).keys()].map((i) => (
+          <option key={i + 1} value={(i + 1) * 1000}>
+            {i + 1}
+          </option>
+        ))}
+      </select>
+      <label htmlFor="percentage-select">
+        Select Delay Increase Percentage:
+      </label>
+      <select
+        id="percentage-select"
+        value={percentage}
+        onChange={handlePercentageChange}
+      >
+        <option value="1.01">1%</option>
+        <option value="1.02">2%</option>
+        <option value="1.03">3%</option>
+        <option value="1.04">4%</option>
+        <option value="1.05">5%</option>
+        <option value="1.10">10%</option>
+        <option value="1.20">20%</option>
+        <option value="1.50">50%</option>
+        <option value="2.00">100%</option>
+      </select>
+      <div className="delay-info">
+        <p>Current delay: {currentDelay.toFixed(2)} seconds</p>
+      </div>
       {user ? (
         isCountingDown && countdown > 0 ? (
           <div className="countdown">

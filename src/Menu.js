@@ -1,6 +1,5 @@
 // Menu.js
 import React, { useState } from "react";
-import Auth from "./login/Auth";
 
 const Menu = ({ user, setUser }) => {
   const [isMenuOpen, setMenuOpen] = useState(false);
@@ -16,7 +15,6 @@ const Menu = ({ user, setUser }) => {
       </button>
       {isMenuOpen && (
         <div className="menu-dropdown">
-          <Auth user={user} setUser={setUser} />
           <a href="/profile">Profile</a>
           <a href="/about">About</a>
           <a href="/support">Support</a>
