@@ -33,7 +33,7 @@ const Meditation = ({ user }) => {
   const riverAudio = useRef(new Audio("/river-flow-68361.mp3")).current;
   const hypnosisHealthAudio = useRef(new Audio("/hypnosis-health.mp3")).current;
   const hypnosisHabitsAudio = useRef(
-    new Audio("/hypnosis-habits1.mp3")
+    new Audio("/hypnosis-habits3.mp3")
   ).current;
 
   useEffect(() => {
@@ -57,6 +57,7 @@ const Meditation = ({ user }) => {
     setCurrentDelay(delay / 1000);
     startTimeRef.current = Date.now();
     riverAudio.play();
+    riverAudio.volume = 0.6;
     timeoutRef.current = setTimeout(playSoundAndIncreaseDelay, delay);
   };
 
@@ -68,7 +69,7 @@ const Meditation = ({ user }) => {
     if (hypnoThreshold > 0 && meditationDuration >= hypnoThreshold * 60000) {
       bellAudio.pause();
 
-      riverAudio.volume = 0.5; // Set to a lower volume (e.g., 30% volume)
+      riverAudio.volume = 0.2; // Set to a lower volume (e.g., 30% volume)
 
       // Play the selected hypnosis audio
       if (hypnosisAudioOption === "health") {
