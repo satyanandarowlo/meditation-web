@@ -3,39 +3,43 @@ import "./Meditation.css";
 
 const Meditation = ({ user }) => {
   const [delay, setDelay] = useState(() => {
-    // Retrieve the stored delay from localStorage or use the default value
     const storedDelay = localStorage.getItem("delay");
     return storedDelay ? parseInt(storedDelay, 10) : 1000;
   });
-  const [runningDelay, setRunningDelay] = useState(0);
   const [maxDelay, setMaxDelay] = useState(() => {
-    // Retrieve the stored max delay from localStorage or use the default value
     const storedMaxDelay = localStorage.getItem("maxDelay");
-    return storedMaxDelay ? parseInt(storedMaxDelay, 10) : 70000; // Default to "Suggestive - Delta"
+    return storedMaxDelay ? parseInt(storedMaxDelay, 10) : 70000;
+  });
+  const [hypnoThreshold, setHypnoThreshold] = useState(() => {
+    const storedThreshold = localStorage.getItem("hypnoThreshold");
+    return storedThreshold ? parseInt(storedThreshold, 10) : 0;
+  });
+  const [hypnosisAudioOption, setHypnosisAudioOption] = useState(() => {
+    return localStorage.getItem("hypnosisAudioOption") || "health";
   });
   const [started, setStarted] = useState(false);
   const [isCountingDown, setIsCountingDown] = useState(false);
   const [countdown, setCountdown] = useState(3);
-  const [totalDuration, setTotalDuration] = useState(0); // Track meditation duration
-  let [currentDelay, setCurrentDelay] = useState(0); // Current trance gap for display
+  const [totalDuration, setTotalDuration] = useState(0);
+  let [currentDelay, setCurrentDelay] = useState(0);
   const [percentage, setPercentage] = useState(() => {
-    // Retrieve the stored percentage from localStorage or use the default value
     const storedPercentage = localStorage.getItem("percentage");
     return storedPercentage ? parseFloat(storedPercentage) : 1.01;
   });
   const startTimeRef = useRef(0);
   const timeoutRef = useRef(null);
 
-  // Load the bell sound and river flow sound using native HTML5 Audio API
   const bellAudio = useRef(new Audio("/bell-a-99888.mp3")).current;
   const riverAudio = useRef(new Audio("/river-flow-68361.mp3")).current;
+  const hypnosisHealthAudio = useRef(new Audio("/hypnosis-health.mp3")).current;
+  const hypnosisHabitsAudio = useRef(
+    new Audio("/hypnosis-habits1.mp3")
+  ).current;
 
   useEffect(() => {
-    // Set river flow audio to loop continuously
     riverAudio.loop = true;
   }, [riverAudio]);
 
-  // Countdown before starting the meditation
   useEffect(() => {
     let countdownTimer;
     if (isCountingDown && countdown > 0) {
@@ -50,77 +54,99 @@ const Meditation = ({ user }) => {
 
   const handleStartMeditation = () => {
     setStarted(true);
-    setCurrentDelay(delay / 1000); // Initial gap in seconds
+    setCurrentDelay(delay / 1000);
     startTimeRef.current = Date.now();
-
-    // Start playing river flow sound in the background
     riverAudio.play();
-
-    timeoutRef.current = setTimeout(playSoundAndIncreaseDelay, delay); // Start the bell sound cycle
+    timeoutRef.current = setTimeout(playSoundAndIncreaseDelay, delay);
   };
 
   const playSoundAndIncreaseDelay = () => {
-    bellAudio.currentTime = 0; // Reset bell sound to the start
-    bellAudio.play(); // Play the bell sound
+    const now = Date.now();
+    const meditationDuration = now - startTimeRef.current;
 
-    if (currentDelay == 0) {
-      console.log("currentDelay is 0");
-      currentDelay = delay;
-      setCurrentDelay(currentDelay / 1000); // Initial gap in seconds
+    // Check if meditation has reached the hypno threshold
+    if (hypnoThreshold > 0 && meditationDuration >= hypnoThreshold * 60000) {
+      bellAudio.pause();
+
+      riverAudio.volume = 0.5; // Set to a lower volume (e.g., 30% volume)
+
+      // Play the selected hypnosis audio
+      if (hypnosisAudioOption === "health") {
+        hypnosisHealthAudio.currentTime = 0;
+        hypnosisHealthAudio.play();
+      } else if (hypnosisAudioOption === "habits") {
+        hypnosisHabitsAudio.currentTime = 0;
+        hypnosisHabitsAudio.play();
+      }
+
+      return; // Stop further bell scheduling
     }
 
-    // Increment the delay by the user-selected percentage
-    currentDelay = currentDelay * percentage;
-    console.log("currentDelay: " + currentDelay);
+    bellAudio.currentTime = 0;
+    bellAudio.play();
+
+    if (currentDelay === 0) {
+      currentDelay = delay;
+      setCurrentDelay(currentDelay / 1000);
+    }
+
+    currentDelay *= percentage;
     if (currentDelay > maxDelay) {
       currentDelay = maxDelay;
     }
 
-    // setDelay(newDelay); // Update state with the new delay
-    setCurrentDelay(currentDelay / 1000); // Show updated delay in seconds
+    setCurrentDelay(currentDelay / 1000);
+    setTotalDuration(meditationDuration);
 
-    const now = Date.now();
-    setTotalDuration(now - startTimeRef.current); // Update meditation duration
-
-    // Schedule the next bell with the updated delay
     timeoutRef.current = setTimeout(playSoundAndIncreaseDelay, currentDelay);
   };
 
   const handleStop = () => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current); // Clear any ongoing timeouts
-    bellAudio.pause(); // Stop bell sound
-    riverAudio.pause(); // Stop river flow sound
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    bellAudio.pause();
+    hypnosisHealthAudio.pause();
+    hypnosisHabitsAudio.pause();
+    riverAudio.pause();
     setStarted(false);
     setIsCountingDown(false);
-    setCountdown(3); // Reset countdown to 10 seconds
-    setTotalDuration(0); // Reset meditation duration
-    setCurrentDelay(0); // Reset trance gap
-    setDelay(1000); // Reset delay to initial 1 second
+    setCountdown(3);
+    setTotalDuration(0);
+    setCurrentDelay(0);
+    setDelay(1000);
   };
 
   const handleStart = () => {
     setIsCountingDown(true);
   };
 
-  // Function to handle percentage change
   const handlePercentageChange = (event) => {
     const newPercentage = parseFloat(event.target.value);
     setPercentage(newPercentage);
-    localStorage.setItem("percentage", newPercentage); // Store the new percentage in localStorage
+    localStorage.setItem("percentage", newPercentage);
   };
 
-  // Function to handle delay change
   const handleDelayChange = (event) => {
     const newDelay = parseInt(event.target.value, 10);
     setDelay(newDelay);
-    localStorage.setItem("delay", newDelay); // Store the new delay in localStorage
+    localStorage.setItem("delay", newDelay);
   };
 
-  // Function to handle max delay change
   const handleMaxDelayChange = (event) => {
     const newMaxDelay = parseInt(event.target.value, 10);
     setMaxDelay(newMaxDelay);
-    localStorage.setItem("maxDelay", newMaxDelay); // Store the new max delay in localStorage
+    localStorage.setItem("maxDelay", newMaxDelay);
+  };
+
+  const handleHypnoThresholdChange = (event) => {
+    const newThreshold = parseInt(event.target.value, 10);
+    setHypnoThreshold(newThreshold);
+    localStorage.setItem("hypnoThreshold", newThreshold);
+  };
+
+  const handleHypnosisAudioChange = (event) => {
+    const selectedAudio = event.target.value;
+    setHypnosisAudioOption(selectedAudio);
+    localStorage.setItem("hypnosisAudioOption", selectedAudio);
   };
 
   return (
@@ -201,6 +227,35 @@ const Meditation = ({ user }) => {
           </option>
         ))}
       </select>
+      <label htmlFor="hypno-threshold-select">
+        Set Hypno Threshold (in minutes):
+      </label>
+      <select
+        id="hypno-threshold-select"
+        value={hypnoThreshold}
+        onChange={handleHypnoThresholdChange}
+      >
+        {[...Array(61).keys()].map((i) => (
+          <option key={i} value={i}>
+            {i === 0 ? "None" : `${i} minute${i > 1 ? "s" : ""}`}
+          </option>
+        ))}
+      </select>
+
+      {hypnoThreshold > 0 && (
+        <>
+          <label htmlFor="hypnosis-audio-select">Select Hypnosis Audio:</label>
+          <select
+            id="hypnosis-audio-select"
+            value={hypnosisAudioOption}
+            onChange={handleHypnosisAudioChange}
+          >
+            <option value="health">Health - hypnosis-health.mp3</option>
+            <option value="habits">Habits - hypnosis-habits.mp3</option>
+          </select>
+        </>
+      )}
+
       <p>Current Speed: {((percentage - 1) * 100).toFixed(2)}%</p>
       {user ? (
         isCountingDown && countdown > 0 ? (
