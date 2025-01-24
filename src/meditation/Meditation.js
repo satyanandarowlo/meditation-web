@@ -38,6 +38,18 @@ const Meditation = ({ user }) => {
     new Audio("/hypnosis-habits3.mp3")
   ).current;
   const hypnosisHeadAudio = useRef(new Audio("/health_head.mp3")).current;
+  const audioOptions = [
+    { label: "Health", value: "hypnosis-health_full" },
+    { label: "Habits", value: "hypnosis-habits3" },
+    { label: "Head3", value: "health_head_3" },
+    { label: "Head", value: "health_head" },
+  ];
+  const audioRefs = useRef(
+    audioOptions.reduce((acc, option) => {
+      acc[option.value] = new Audio(`/${option.value}.mp3`);
+      return acc;
+    }, {})
+  ).current;
 
   useEffect(() => {
     riverAudio.loop = true;
@@ -73,17 +85,10 @@ const Meditation = ({ user }) => {
       bellAudio.pause();
 
       riverAudio.volume = 0.2; // Set to a lower volume (e.g., 30% volume)
-
-      // Play the selected hypnosis audio
-      if (hypnosisAudioOption === "health") {
-        hypnosisHealthAudio.currentTime = 0;
-        hypnosisHealthAudio.play();
-      } else if (hypnosisAudioOption === "habits") {
-        hypnosisHabitsAudio.currentTime = 0;
-        hypnosisHabitsAudio.play();
-      } else if (hypnosisAudioOption === "head") {
-        hypnosisHeadAudio.currentTime = 0;
-        hypnosisHeadAudio.play();
+      const selectedAudio = audioRefs[hypnosisAudioOption];
+      if (selectedAudio) {
+        selectedAudio.currentTime = 0;
+        selectedAudio.play();
       }
 
       return; // Stop further bell scheduling
@@ -258,9 +263,11 @@ const Meditation = ({ user }) => {
             value={hypnosisAudioOption}
             onChange={handleHypnosisAudioChange}
           >
-            <option value="health">Health - hypnosis-health.mp3</option>
-            <option value="habits">Habits - hypnosis-habits.mp3</option>
-            <option value="head">Head - hypnosis.mp3</option>
+            {audioOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label} - {option.value}.mp3
+              </option>
+            ))}
           </select>
         </>
       )}
