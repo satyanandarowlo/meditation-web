@@ -31,10 +31,13 @@ const Meditation = ({ user }) => {
 
   const bellAudio = useRef(new Audio("/bell-a-99888.mp3")).current;
   const riverAudio = useRef(new Audio("/river-flow-68361.mp3")).current;
-  const hypnosisHealthAudio = useRef(new Audio("/hypnosis-health.mp3")).current;
+  const hypnosisHealthAudio = useRef(
+    new Audio("/hypnosis-health_full.mp3")
+  ).current;
   const hypnosisHabitsAudio = useRef(
     new Audio("/hypnosis-habits3.mp3")
   ).current;
+  const hypnosisHeadAudio = useRef(new Audio("/health_head.mp3")).current;
 
   useEffect(() => {
     riverAudio.loop = true;
@@ -78,6 +81,9 @@ const Meditation = ({ user }) => {
       } else if (hypnosisAudioOption === "habits") {
         hypnosisHabitsAudio.currentTime = 0;
         hypnosisHabitsAudio.play();
+      } else if (hypnosisAudioOption === "head") {
+        hypnosisHeadAudio.currentTime = 0;
+        hypnosisHeadAudio.play();
       }
 
       return; // Stop further bell scheduling
@@ -107,6 +113,7 @@ const Meditation = ({ user }) => {
     bellAudio.pause();
     hypnosisHealthAudio.pause();
     hypnosisHabitsAudio.pause();
+    hypnosisHeadAudio.pause();
     riverAudio.pause();
     setStarted(false);
     setIsCountingDown(false);
@@ -253,6 +260,7 @@ const Meditation = ({ user }) => {
           >
             <option value="health">Health - hypnosis-health.mp3</option>
             <option value="habits">Habits - hypnosis-habits.mp3</option>
+            <option value="head">Head - hypnosis.mp3</option>
           </select>
         </>
       )}
